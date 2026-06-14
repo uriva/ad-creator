@@ -241,7 +241,7 @@ Assemble the final commercial using `references/editing.md` as your guide.
 ### 🚀 ADVANCED RUNTIME TIPS (Lessons from Production)
 
 1. **The "Animatic / Motion Comic" Fallback (Safety Blocks):**
-   When animating parody characters, recognized IP, or famous fictional properties, advanced video models (like Seedance 2.0) can trigger a **Content Policy Violation (partner_validation_failed)** block. In these cases, immediately fall back to a high-quality **Motion Comic / Animatic** slideshow. Compile your generated keyframes locally on the server with FFmpeg. It is 100% free, safe from content filters, and delivers a highly stylized commercial.
+   When animating parody characters, recognized IP, or famous fictional properties, advanced video models (like Seedance 2.0) can trigger a **Content Policy Violation (partner_validation_failed)** block. In these cases, immediately fall back to a high-quality **Motion Comic / Animatic** slideshow. Compile your generated keyframes locally on the server with FFmpeg. It is 100% free, safe from content filters, and delivers a highly stylized commercial. **When creating a Ken Burns zoom/pan effect, always use the downscaled Low-Memory Zoompan Filter Recipe (see references/animatics-and-voiceovers.md §9) to prevent Out of Memory (OOM) / SIGKILL crashes on remote sandboxes.**
 
 2. **Dynamic Audio-Video Sync & Pacing:**
    To prevent dialogue from cutting off mid-sentence, always generate your speech tracks (using `edge-tts`) first. Query their exact duration using `ffprobe` and set the video loops dynamically to match the audio length (plus `0.3s` padding).

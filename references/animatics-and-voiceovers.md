@@ -72,3 +72,22 @@ When executing high-concept commercials or parody campaigns, advanced video gene
   ```bash
   drawtext=text='Jerry\\: And look, I can create as many agents':enable='between(t,3.2,5.5)':x=(w-text_w)/2:y=h-160:fontcolor=yellow:fontsize=20:box=1:boxcolor=black@0.7:boxborderw=6,drawtext=text='as I want! It is awesome!':enable='between(t,3.2,5.5)':x=(w-text_w)/2:y=h-120:fontcolor=yellow:fontsize=20:box=1:boxcolor=black@0.7:boxborderw=6
   ```
+
+## 9. Failsafe & Low-Memory Ken Burns (zoompan) Filter Recipe
+* **The Problem:** Running FFmpeg's `zoompan` filter at full `1080x1920` resolution at 30fps creates huge internal frame buffers in memory (e.g. 120 frames for a 4s clip). This instantly causes Out of Memory (OOM) `SIGKILL` errors on remote sandboxes.
+* **The Solution:** Use the **Low-Memory Zoompan Pattern** to scale down the image, run zoompan at a lower resolution and framerate, and then scale back up to the final size. This cuts memory usage by over 80%:
+  1. Scale the input image down to `720x1280` (High Quality) or `540x960` (Ultra Safe) before `zoompan`.
+  2. Reduce the framerate of the zoompan output to `15` (meaning `d = duration * 15`).
+  3. Set zoompan size `s` to match the downscaled resolution (`720x1280` or `540x960`).
+  4. Scale the output back up to `1080x1920` after zoompan, and use `-preset ultrafast` during H.264 encoding to minimize compression overhead.
+
+* **Correct, Low-Memory Zoom/Pan (Ken Burns) commands:**
+  * **Standard (720x1280, Recommended Quality):**
+    ```bash
+    ffmpeg -y -loop 1 -i input.png -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,zoompan=z='zoom+0.0008':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=60:s=720x1280,fps=15,scale=1080:1920" -c:v libx264 -preset ultrafast -t 4 -pix_fmt yuv420p output.mp4
+    ```
+  * **Ultra-Safe (540x960, Minimum Memory):**
+    ```bash
+    ffmpeg -y -loop 1 -i input.png -vf "scale=540:960:force_original_aspect_ratio=decrease,pad=540:960:(ow-iw)/2:(oh-ih)/2,zoompan=z='zoom+0.0008':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=60:s=540x960,fps=15,scale=1080:1920" -c:v libx264 -preset ultrafast -t 4 -pix_fmt yuv420p output.mp4
+    ```
+
