@@ -9,7 +9,7 @@ When executing high-concept commercials or parody campaigns, advanced video gene
 ## 2. Dynamic Audio-Video Pacing (No Cut-offs)
 * **The Rule:** Never use fixed-duration trimming (`-t 4`, `-t 5`) on multi-speaker or fast-paced dialogue clips. This cuts off characters mid-sentence.
 * **The Workflow:** 
-  1. Generate individual speech/dialogue files asynchronously using a high-quality neural Text-to-Speech (TTS) tool (like `edge-tts`).
+  1. Generate individual speech/dialogue files asynchronously using a high-quality neural Text-to-Speech (TTS) tool (like `edge-tts` or ElevenLabs).
   2. Assemble or mix individual speaker lines per shot (e.g., Summer speaks first, Jerry replies with an `adelay` filter).
   3. Query the exact duration of the shot's final mixed audio file using `ffprobe`:
      ```bash
@@ -35,3 +35,40 @@ When executing high-concept commercials or parody campaigns, advanced video gene
 * **Ephemeral Sandboxes:** Ephemeral VM containers wipe `/tmp` and local storage between independent tool calls.
 * **The Perfect Build Pattern:** Download all raw keyframe assets, perform all image scaling/formatting, run all audio TTS generation, compile the intermediate shot clips, and concatenate the final master MP4 **entirely inside a local ramdisk `/tmp/` directory within a single script run**. Once compilation is complete, copy the finalized `.mp4` file to `/mnt/files/` or upload it to S3 in one single write operation.
 
+## 5. ElevenLabs Generative Voice Acting
+* **The Rule:** For high-concept, comedic, or animated commercials, standard robotic TTS voices fall flat. Use **ElevenLabs** for expressive voice generation.
+* **Expressive Settings:**
+  * For cartoon voice work, set `stability` low (between `0.25` and `0.45`). Lower stability allows the generative neural network to express drama, voice cracks, shouting, and high-energy inflections.
+  * Set `similarity_boost` to `0.75` for clarity, and `use_speaker_boost` to `True`.
+  * Select premade or cloned trickster/creator voices (e.g., Callum `N2lVS1w4EtoT3dr4eOWO` for Rick-like tones, Liam `TX3LPaxmHKxFdv7VOQHJ` for energetic ones).
+
+## 6. FFmpeg Pitch Shifting & Cartoon Vocals
+* **The Pitch Shift Filter Graph:** To convert normal adult voices into cartoonish squeaks (Meeseeks) or tremulous stammers (Morty), use FFmpeg's `asetrate` and `atempo` filters in tandem.
+  * `asetrate` alters the sampling rate, which changes both pitch and speed (e.g. `44100 * 1.6` shifts pitch up 1.6x but speeds it up).
+  * `atempo` shifts the speed back down to normal without affecting the pitch.
+  * **High-Pitched Squeaky (Meeseeks):**
+    ```bash
+    ffmpeg -y -i input.mp3 -af "asetrate=44100*1.6,atempo=1/1.6" output.wav
+    ```
+  * **Nervous Cracking (Morty):**
+    ```bash
+    ffmpeg -y -i input.mp3 -af "asetrate=44100*1.25,atempo=1/1.25" output.wav
+    ```
+
+## 7. Failsafe FFmpeg Filter Mixing (amix & concat)
+* **Amix Connection Errors:** When mixing audio tracks with different channel structures (e.g., mono TTS clips mixed into stereo beds), labeling the final output `[out]` without explicitly mapping it `-map "[out]"` causes FFmpeg to crash with `unconnected output` errors.
+  * **Failsafe Syntax:** Simply omit the final stream label in your `amix` filter complex, and let FFmpeg automatically connect the mixed stream to the output file:
+    ```bash
+    ffmpeg -y -i line1.mp3 -i line2.mp3 -filter_complex "[0:a]adelay=0[a0];[1:a]adelay=1800[a1];[a0][a1]amix=inputs=2:duration=longest" -ar 44100 -ac 2 mixed.wav
+    ```
+* **Filter Concat vs Demuxer:** Direct `-c copy` concat demuxing fails with exit status 254 if clips have slightly different PTS start-times or float-point durations. Always use FFmpeg's `concat` filter complex to decode and re-encode raster-level frames safely when durations are float numbers:
+  ```bash
+  ffmpeg -y -i c1.mp4 -i c2.mp4 -filter_complex "[0:v][1:v]concat=n=2:v=1:a=0[outv]" -map "[outv]" -c:v libx264 -preset ultrafast compiled.mp4
+  ```
+
+## 8. Vertical Multiline Subtitle Stacking
+* **The Layout:** On vertical portrait canvases (540x960), long sentences will overflow past the left/right safe zone boundaries.
+* **The Solution:** Stack text blocks vertically on different `y` coordinates using the `enable` timeline tag:
+  ```bash
+  drawtext=text='Jerry\\: And look, I can create as many agents':enable='between(t,3.2,5.5)':x=(w-text_w)/2:y=h-160:fontcolor=yellow:fontsize=20:box=1:boxcolor=black@0.7:boxborderw=6,drawtext=text='as I want! It is awesome!':enable='between(t,3.2,5.5)':x=(w-text_w)/2:y=h-120:fontcolor=yellow:fontsize=20:box=1:boxcolor=black@0.7:boxborderw=6
+  ```
