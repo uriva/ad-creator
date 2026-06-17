@@ -130,3 +130,15 @@ When editing, modifying, or voice-over-replacing dialogue inside an existing vid
 * **Automated Word-Level SRT Subtitles:** Instead of hardcoded, brittle drawtext filters, generate a clean, word-wrapped `.srt` subtitle file mathematically timed based on character density (aiming for 3-4 words or under 20 characters per line). Burn it into the video using FFmpeg's `subtitles` filter with advanced ASS styles:
   `-vf subtitles=subs.srt:force_style='Alignment=2,FontSize=18,PrimaryColour=&H00FFFF,OutlineColour=&H000000,BorderStyle=3,MarginV=30'`
   This completely removes speaker names, auto-wraps lines, keeps titles centered, and prevents screen overflow on portrait mobile dimensions.
+
+* **L-Cuts & Reaction Shots to Mask Loops:** Looping a short (1-2s) close-up of an actor speaking makes the looping seam noticeable when they blink or reset their posture. To mask the loop and deliver a broadcast-quality edit, implement a **cinematic L-cut**:
+  1. Show the speaking character's face for the first few seconds (e.g. 0-3s).
+  2. Cut away to a reaction shot of the second character listening (e.g. 3-6s), keeping the speaker's voice track playing continuously over the cut.
+  3. Cut back to the speaker's face for the final word or sentence resolver (e.g. 6-7s).
+  This completely masks the loop seam, creates active pacing, and mimics standard broadcast editing structures.
+
+* **L-Cuts & Reaction Shots to Mask Loops:** Looping a short (1-2s) close-up of an actor speaking makes the looping seam noticeable when they blink or reset their posture. To mask the loop and deliver a broadcast-quality edit, implement a **cinematic L-cut**:
+  1. Show the speaking character's face for the first few seconds (e.g. 0-3s).
+  2. Cut away to a reaction shot of the second character listening (e.g. 3-6s), keeping the speaker's voice track playing continuously over the cut.
+  3. Cut back to the speaker's face for the final word or sentence resolver (e.g. 6-7s).
+  This completely masks the loop seam, creates active pacing, and mimics standard broadcast editing structures.
