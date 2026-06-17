@@ -142,3 +142,19 @@ When editing, modifying, or voice-over-replacing dialogue inside an existing vid
   2. Cut away to a reaction shot of the second character listening (e.g. 3-6s), keeping the speaker's voice track playing continuously over the cut.
   3. Cut back to the speaker's face for the final word or sentence resolver (e.g. 6-7s).
   This completely masks the loop seam, creates active pacing, and mimics standard broadcast editing structures.
+
+* **Direct-Stream MP4 Delivery Only:** Never deliver video exports using landing-page-locked or broken file locker hosts like Filebin. Deliver strictly using direct, raw, high-speed streamable `.mp4` URLs (such as Uguu.se) that render with full audio and visual playback instantly in native browser or phone players on the very first click.
+* **Freeze-Frame Reactions to Silence Mute Characters:** In L-cuts or multi-camera reaction shots, if the listening character speaks or shifts their lips in the original source footage, they will appear to be talking over the speaker's voice track. To prevent this:
+  1. Extract a single image frame (`-vframes 1`) from the raw footage at a timestamp where the listener's mouth is completely closed and deadpan:
+     `ffmpeg -ss <timestamp> -i raw.mp4 -vf "<scale_filters>" -vframes 1 frame.png`
+  2. Convert that single frozen frame into a static looped reaction clip matching the reaction shot duration:
+     `ffmpeg -loop 1 -i frame.png -t <duration> -c:v libx264 -preset ultrafast -r 15 -pix_fmt yuv420p v_reaction.mp4`
+  3. Concatenate this frozen clip into the timeline. This guarantees a perfectly static, natural, silent reaction shot with zero distracting lip movement.
+
+* **Direct-Stream MP4 Delivery Only:** Never deliver video exports using landing-page-locked or broken file locker hosts like Filebin. Deliver strictly using direct, raw, high-speed streamable `.mp4` URLs (such as Uguu.se) that render with full audio and visual playback instantly in native browser or phone players on the very first click.
+* **Freeze-Frame Reactions to Silence Mute Characters:** In L-cuts or multi-camera reaction shots, if the listening character speaks or shifts their lips in the original source footage, they will appear to be talking over the speaker's voice track. To prevent this:
+  1. Extract a single image frame (`-vframes 1`) from the raw footage at a timestamp where the listener's mouth is completely closed and deadpan:
+     `ffmpeg -ss <timestamp> -i raw.mp4 -vf "<scale_filters>" -vframes 1 frame.png`
+  2. Convert that single frozen frame into a static looped reaction clip matching the reaction shot duration:
+     `ffmpeg -loop 1 -i frame.png -t <duration> -c:v libx264 -preset ultrafast -r 15 -pix_fmt yuv420p v_reaction.mp4`
+  3. Concatenate this frozen clip into the timeline. This guarantees a perfectly static, natural, silent reaction shot with zero distracting lip movement.
