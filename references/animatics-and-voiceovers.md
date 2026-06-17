@@ -102,3 +102,23 @@ When editing, modifying, or voice-over-replacing dialogue inside an existing vid
   5. **Lip-Sync via sync.so:** Submit the original video segment and the newly generated ElevenLabs TTS audio track to the sync.so API (via the `sync-3` model) to align lip movements perfectly.
   6. **Composition & Assembly:** Download the lip-synced video and assemble it into your final video timeline using FFmpeg.
 
+
+## 11. Production Learnings for Broadcast-Quality Dubbing (June 2026)
+* **find-scene Integration:** Always search subtitle files (`search_phrase` or `find_episode_by_phrase`) first before download. Get the `videoHash` and `textSource` to isolate the exact, continuous single-shot timestamps. This ensures the characters are centered and in-frame, bypassing low-quality or cropped social clips (like TikTok/Instagram compilations).
+* **True Character Voice Cloning:** To clone custom cartoon or TV show characters:
+  1. Extract a clean, isolated 5-10s voice clip of the target speaker using FFmpeg:
+     `ffmpeg -ss <start> -i video.mp4 -t <dur> -ac 1 -ar 44100 dinesh_sample.mp3`
+  2. Call ElevenLabs `/v1/voices/add` to create an authentic, custom-cloned voice profile.
+  3. Synthesize the new script lines using this newly generated `voice_id`.
+* **Video Looping & Syncing:** To handle longer speech over shorter close-ups, extract a clean continuous face clip and loop it to match the exact duration of the synthesized audio before calling `fal-ai/sync-lipsync/v3`.
+* **Avoiding FFmpeg Subtitle Crashes:** Absolutely eliminate all apostrophes, single quotes, and special characters from drawtext text inputs (`"prompt to bot's"` -> `"prompt to bot bots"`). This prevents parser crashes and unhandled exceptions.
+
+## 11. Production Learnings for Broadcast-Quality Dubbing (June 2026)
+* **find-scene Integration:** Always search subtitle files (`search_phrase` or `find_episode_by_phrase`) first before download. Get the `videoHash` and `textSource` to isolate the exact, continuous single-shot timestamps. This ensures the characters are centered and in-frame, bypassing low-quality or cropped social clips (like TikTok/Instagram compilations).
+* **True Character Voice Cloning:** To clone custom cartoon or TV show characters:
+  1. Extract a clean, isolated 5-10s voice clip of the target speaker using FFmpeg:
+     `ffmpeg -ss <start> -i video.mp4 -t <dur> -ac 1 -ar 44100 dinesh_sample.mp3`
+  2. Call ElevenLabs `/v1/voices/add` to create an authentic, custom-cloned voice profile.
+  3. Synthesize the new script lines using this newly generated `voice_id`.
+* **Video Looping & Syncing:** To handle longer speech over shorter close-ups, extract a clean continuous face clip and loop it to match the exact duration of the synthesized audio before calling `fal-ai/sync-lipsync/v3`.
+* **Avoiding FFmpeg Subtitle Crashes:** Absolutely eliminate all apostrophes, single quotes, and special characters from drawtext text inputs (`"prompt to bot's"` -> `"prompt to bot bots"`). This prevents parser crashes and unhandled exceptions.
