@@ -172,3 +172,9 @@ When editing, modifying, or voice-over-replacing dialogue inside an existing vid
   1. Only send the active speaking character's shots to the Lip-Sync API. Use a long, continuous, unlooped clip of the speaker to prevent looping artifacts.
   2. Process the reaction/listening shots locally (or use natural silent clips) and **never upload them to the Sync API**.
   3. Concatenate the synced speaking shots and the untouched reaction shots locally using FFmpeg's `filter_complex`. This keeps the listener's lips 100% static while the speaker's lips are perfectly synced.
+
+* **Non-Repeating Multi-Clip Editing (The Ultimate Loop Killer):** Never loop a single short close-up of a speaker to cover long audio tracks, as loop resets are highly visible when they blink or shift. Instead, design a professional multi-camera montage:
+  1. Use find-scene to locate **two completely different, separate natural shots** of the speaker talking from other parts of the scene/episode.
+  2. Sync Shot A to the first speaking segment, and Shot B (different footage!) to the final speaking segment.
+  3. Insert a natural, silent reaction shot of a listener in between them.
+  This ensures that every cut on screen is 100% natural, non-repeating, and organic, with **absolutely zero loop jumps, freeze-frames, or repetitive motions**.
