@@ -122,3 +122,11 @@ When editing, modifying, or voice-over-replacing dialogue inside an existing vid
   3. Synthesize the new script lines using this newly generated `voice_id`.
 * **Video Looping & Syncing:** To handle longer speech over shorter close-ups, extract a clean continuous face clip and loop it to match the exact duration of the synthesized audio before calling `fal-ai/sync-lipsync/v3`.
 * **Avoiding FFmpeg Subtitle Crashes:** Absolutely eliminate all apostrophes, single quotes, and special characters from drawtext text inputs (`"prompt to bot's"` -> `"prompt to bot bots"`). This prevents parser crashes and unhandled exceptions.
+
+* **Automated Word-Level SRT Subtitles:** Instead of hardcoded, brittle drawtext filters, generate a clean, word-wrapped `.srt` subtitle file mathematically timed based on character density (aiming for 3-4 words or under 20 characters per line). Burn it into the video using FFmpeg's `subtitles` filter with advanced ASS styles:
+  `-vf subtitles=subs.srt:force_style='Alignment=2,FontSize=18,PrimaryColour=&H00FFFF,OutlineColour=&H000000,BorderStyle=3,MarginV=30'`
+  This completely removes speaker names, auto-wraps lines, keeps titles centered, and prevents screen overflow on portrait mobile dimensions.
+
+* **Automated Word-Level SRT Subtitles:** Instead of hardcoded, brittle drawtext filters, generate a clean, word-wrapped `.srt` subtitle file mathematically timed based on character density (aiming for 3-4 words or under 20 characters per line). Burn it into the video using FFmpeg's `subtitles` filter with advanced ASS styles:
+  `-vf subtitles=subs.srt:force_style='Alignment=2,FontSize=18,PrimaryColour=&H00FFFF,OutlineColour=&H000000,BorderStyle=3,MarginV=30'`
+  This completely removes speaker names, auto-wraps lines, keeps titles centered, and prevents screen overflow on portrait mobile dimensions.
