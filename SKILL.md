@@ -58,6 +58,11 @@ names; they are precise.
 5. **Finish in the edit.** Raw clips aren't an ad. The assembly step (color,
    pacing, music bed, titles, logo, end card, export) is what creates the
    broadcast feel. See `references/editing.md`.
+6. **Existing Scenes Lip-Sync & Voice Cloning.** When working on an existing scene
+   (e.g., editing existing footage, re-voicing a scene, or replacing speech on existing
+   video clips rather than generating new animation from scratch), always **use sync.so
+   to sync lips** and **use ElevenLabs for cloning the voices** of the original speakers
+   to maintain perfect vocal and visual character consistency.
 
 ---
 
@@ -251,5 +256,11 @@ Assemble the final commercial using `references/editing.md` as your guide.
 
 4. **Avoiding S3FS FUSE Latency Bottlenecks:**
    Never write or render video frames directly to cloud-backed mounts (like `/mnt/files/` via `s3fs`). S3FS write latency and lacking file lock support can cause rendering to freeze or crash. Download, encode, and concatenate completely inside a fast local directory (like `/tmp/`) first, then copy the finalized MP4 to the shared persistent mount.
+
+5. **Existing Scenes Lip-Sync & Voice Cloning:**
+   When working with existing video clips (e.g., parody scenes, movie clips, or user-supplied footage) where you need to change or replace the dialogue:
+   - **Voice Extraction:** To isolate a clean segment where only one target speaker is talking, use a transcription tool like **Whisper**. Analyze the transcribed phrases and timestamps to locate and cut the exact portion belonging to the speaker. If there are issues or voice overlaps, inspect the entire video clip to validate and correct timestamps.
+   - **Voice Cloning:** Use **ElevenLabs** to clone the character's voice from the extracted sample (at least 10 seconds of sample audio is enough, but more improves the quality; keep low stability settings to preserve emotional inflections).
+   - **Lip-Sync:** Use **sync.so** (via `sync-3` model) to perfectly synchronize and map the new ElevenLabs-cloned dialogue audio back onto the lips of the characters in the existing video clip.
 
 See `references/animatics-and-voiceovers.md` for full implementation scripts and specifications.
