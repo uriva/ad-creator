@@ -62,7 +62,8 @@ names; they are precise.
    (e.g., editing existing footage, re-voicing a scene, or replacing speech on existing
    video clips rather than generating new animation from scratch), always **use sync.so
    to sync lips** and **use ElevenLabs for cloning the voices** of the original speakers
-   to maintain perfect vocal and visual character consistency.
+   to maintain perfect vocal and visual character consistency. If you need to find scenes
+   from famous TV shows or movies, you can use the find-scene API (whose documentation and usage instructions are at https://api.find-scene.com/llms.txt).
 
 ---
 
@@ -259,6 +260,7 @@ Assemble the final commercial using `references/editing.md` as your guide.
 
 5. **Existing Scenes Lip-Sync & Voice Cloning:**
    When working with existing video clips (e.g., parody scenes, movie clips, or user-supplied footage) where you need to change or replace the dialogue:
+   - **Finding Scenes:** To find scenes from famous TV shows or movies, check the find-scene API instructions at `https://api.find-scene.com/llms.txt`.
    - **Voice Extraction:** To isolate a clean segment where only one target speaker is talking, use a transcription tool like **Whisper**. Analyze the transcribed phrases and timestamps to locate and cut the exact portion belonging to the speaker. If there are issues or voice overlaps, inspect the entire video clip to validate and correct timestamps.
    - **Voice Cloning:** Use **ElevenLabs** to clone the character's voice from the extracted sample (at least 10 seconds of sample audio is enough, but more improves the quality; keep low stability settings to preserve emotional inflections).
    - **Lip-Sync:** Use **sync.so** (via `sync-3` model) to perfectly synchronize and map the new ElevenLabs-cloned dialogue audio back onto the lips of the characters in the existing video clip.

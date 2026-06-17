@@ -95,9 +95,10 @@ When executing high-concept commercials or parody campaigns, advanced video gene
 When editing, modifying, or voice-over-replacing dialogue inside an existing video scene (instead of generating new video frames from scratch):
 * **The Rule:** Always use **ElevenLabs for voice cloning** and **sync.so for lip-syncing** to preserve character consistency.
 * **The Pipeline:**
-  1. **Voice Extraction:** Crop/extract a short, clean snippet (at least 10 seconds is enough, but more sample audio improves the cloning quality) where only one speaker speaks with minimal background noise. To isolate the correct segment, use a transcription tool (such as **Whisper**) to transcribe the audio, inspect the phrases/timestamps, and infer the exact portion belonging to the target speaker. If you run into issues or overlap, look at the entire video context to validate and resolve any discrepancies.
-  2. **ElevenLabs Voice Cloning:** Create a cloned voice profile using the extracted audio. Keep stability low (between `0.25` and `0.45`) to preserve emotional range.
-  3. **TTS Synthesis:** Synthesize the new dialogue lines with ElevenLabs TTS using the cloned voice ID (using the `eleven_multilingual_v2` model).
-  4. **Lip-Sync via sync.so:** Submit the original video segment and the newly generated ElevenLabs TTS audio track to the sync.so API (via the `sync-3` model) to align lip movements perfectly.
-  5. **Composition & Assembly:** Download the lip-synced video and assemble it into your final video timeline using FFmpeg.
+  1. **Finding Scenes:** To find scenes from famous TV shows or movies, you can use the find-scene API. Refer to the documentation and endpoints described at `https://api.find-scene.com/llms.txt` to search for and download the relevant clips or extract frames.
+  2. **Voice Extraction:** Crop/extract a short, clean snippet (at least 10 seconds is enough, but more sample audio improves the cloning quality) where only one speaker speaks with minimal background noise. To isolate the correct segment, use a transcription tool (such as **Whisper**) to transcribe the audio, inspect the phrases/timestamps, and infer the exact portion belonging to the target speaker. If you run into issues or overlap, look at the entire video context to validate and resolve any discrepancies.
+  3. **ElevenLabs Voice Cloning:** Create a cloned voice profile using the extracted audio. Keep stability low (between `0.25` and `0.45`) to preserve emotional range.
+  4. **TTS Synthesis:** Synthesize the new dialogue lines with ElevenLabs TTS using the cloned voice ID (using the `eleven_multilingual_v2` model).
+  5. **Lip-Sync via sync.so:** Submit the original video segment and the newly generated ElevenLabs TTS audio track to the sync.so API (via the `sync-3` model) to align lip movements perfectly.
+  6. **Composition & Assembly:** Download the lip-synced video and assemble it into your final video timeline using FFmpeg.
 
