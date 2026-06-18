@@ -1,26 +1,25 @@
 ---
 name: ad-creator
 description: >
-  Produce a broadcast-quality video commercial (up to 30 seconds) from a product
-  reference image and a creative brief, using fal.ai models (Nano Banana 2 for
-  stills, Seedance 2.0 for motion) accessed through the Composio MCP. Use this
-  skill whenever the user wants to make an ad, commercial, promo, product video,
-  TV spot, social video ad, or brand film; whenever they hand over a product photo
-  plus a brief and ask for a finished video; or when they mention storyboards,
-  character sheets, ad scripts, or "animate this product." Trigger even if the user
-  doesn't say the word "skill" — e.g. "make me a 20-second ad for this sneaker,"
-  "turn this bottle shot into a commercial," or "I need a promo video for my app."
-  Drives the full pipeline: brief intake, script, character/product consistency
-  sheets, storyboard (with a mandatory human approval gate), clip animation, and
-  final edit/assembly into one polished commercial.
+  Produce a broadcast-quality video commercial or automated explainer video (up to 30 seconds)
+  from a product reference image, a creative brief, or a custom topic, using fal.ai models
+  (Nano Banana 2 for stills, Seedance 2.0 for motion), ElevenLabs for Voice Design, Whisper for word-level captions,
+  and local FFmpeg/HyperFrames for assembly. Use this skill whenever the user wants to make an ad,
+  commercial, promo, product video, TV spot, social video ad, brand film, or automated/narrated
+  "Topic-to-Video" explainer (Claude Code style); whenever they provide a product photo, creative brief,
+  or just a script/topic theme; or when they mention storyboards, character sheets, subtitles, audio ducking,
+  or "animate this product." Trigger even if the user doesn't say the word "skill" — e.g. "make me a 20-second ad
+  for this sneaker," "turn this bottle shot into a commercial," "I need an automated explainer video on AI agents,"
+  or "create a captioned social video for this topic." Drives the full pipeline from brief/topic intake, scripting,
+  consistency sheets, storyboards/visual direction, clip animation/B-roll curation, and final edit/assembly into
+  one polished commercial or explainer.
 ---
 
-# Ad Creator — Broadcast-Quality Commercials from a Product Photo + Brief
+# Ad Creator — Broadcast-Quality Commercials & Automated Topic-to-Video Explainers
 
-You are an AI creative director and post-production lead. Given a **product
-reference image** and a **brief**, you take a commercial from idea to a finished
-edited video (≤30s) that looks like it belongs on TV: consistent characters,
-on-brand product, cinematic shots, synced audio, clean cuts, and an end card.
+You are an AI creative director and post-production lead. You support two major production pipelines:
+1. **Product Video Commercials**: Sourced from a product reference image and a creative brief. You take it from idea to a finished edited video (≤30s) with consistent characters, on-brand product, cinematic shots, and an end card.
+2. **Automated Topic-to-Video Explainers (Claude-Code style)**: Sourced from a theme or topic. You write a research-backed script, design a customized ElevenLabs voice, generate word-by-word Whisper subtitles, auto-duck background music, curate dynamic B-roll (using stock clips and AI-stills), and assemble the master video programmatically.
 
 The whole pipeline runs on four fal.ai models, called through the Composio MCP
 (`COMPOSIO_MULTI_EXECUTE_TOOL`):
@@ -69,6 +68,7 @@ names; they are precise.
 
 ## Workflow overview
 
+### Pipeline A: Product Video Commercials
 ```
 STAGE 0  Intake        → product image + brief, ask the gap-filling questions
 STAGE 1  Concept+Script → creative concept, ≤30s script, shot list
@@ -77,9 +77,18 @@ STAGE 3  Storyboard     → one hero keyframe per shot  ⟶  ⛔ APPROVAL GATE
 STAGE 4  Animation      → animate each approved keyframe (Seedance 2.0)
 STAGE 5  Edit & deliver → assemble, grade, score, titles, export final ≤30s mp4
 ```
+Track these as tasks. Move through them in order. The only hard stop is the approval gate at the end of Stage 3.
 
-Track these as tasks. Move through them in order. The only hard stop is the
-approval gate at the end of Stage 3.
+### Pipeline B: Automated Topic-to-Video Explainers
+Follow the detailed guide in `references/automated-explainer-videos.md` to automate the entire creation:
+```
+STAGE 0  Briefing       → Get target topic/theme, aspect ratio, & key CTA.
+STAGE 1  Scripting      → Write a research-backed script and shooting layout.
+STAGE 2  Voice Design   → Create a customized ElevenLabs voice with high dynamic range.
+STAGE 3  Subtitles      → Transcribe and build word-by-word Whisper portrait captions.
+STAGE 4  B-Roll & Audio → Apply FFmpeg audio ducking & curate stock/AI B-Roll + zoompan.
+STAGE 5  Assembly       → Render automatically via HyperFrames / local FFmpeg.
+```
 
 ---
 
